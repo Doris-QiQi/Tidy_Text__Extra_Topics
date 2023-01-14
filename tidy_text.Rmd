@@ -148,11 +148,31 @@ word_ratios %>%
 ```
 
 
-
+# Sentiment Analysis
 ```{r}
-
-
+bing_sentiments = get_sentiments("bing")
 ```
 
 
+```{r}
+dynamite_sentiments = 
+  dynamite_words %>% 
+  inner_join(., bing_sentiments) %>% 
+  count(review_num, sentiment) %>% 
+  pivot_wider(
+    names_from = sentiment, 
+    values_from = n, 
+    values_fill = 0) %>% 
+  mutate(review_sentiment = positive - negative) %>% 
+  select(review_num, review_sentiment)
+
+```
+
+```{r}
+dynamite_sentiments = 
+  right_join(
+    dynamite_reviews, dynamite_sentiments, 
+    by = "review_num")
+
+```
 
